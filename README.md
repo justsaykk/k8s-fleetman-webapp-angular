@@ -18,8 +18,12 @@ Basically, within the K8s architecture, there can be 2 or more versions of a con
 
 ## How does K8s achieve this?
 
+TL;DR: Services acts as controllers do things with pods. You'll probably never handle the pods yourself.
+
 ### Introducing: Pods
 
 TYPICALLY, 1 pod contains 1 container. However, if the containers cannot live without each other, then it may be wiser to put them into the same pod. *But c'mon man, encapsulation principals?*
 
 These pods are shortlived and *ephemeral*. Imagine Java methods. Each time it is supposed to run, it'll be called, executed and left alone. Similarly for pods, it'll be **CREATED**, execute what it needs to do, and finally "die" or *evicted*.
+
+### Introducing: Services

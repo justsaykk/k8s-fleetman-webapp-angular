@@ -20,3 +20,17 @@ spec:
   type: NodePort
 
   # After every change, need to re-apply the yaml fileß
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: fleetman-queue
+spec:
+  selector:
+    app: queue 
+  ports:
+    - name: http
+      port: 8161
+      nodePort: 30010
+  type: NodePort
