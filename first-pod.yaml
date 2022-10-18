@@ -1,0 +1,34 @@
+# Intrinsically, pods are not exposed to the internet.
+# Pods needs something to help expose them to the browser/internet.
+# These are called services.
+# After the service to expose them has been created, the pod can be accessed via
+# localhost:<nodePort>    Since we are using docker desktop, it is safe to use "localhost"
+# If we are not using docker desktop, we will need to issue command: $minikube ip to get the domain IP.
+
+apiVersion: v1
+kind: Pod
+metadata:
+  name: webapp
+  # Need to have a label for a service to use this pod
+  labels:
+    app: webapp
+    release: "0"
+spec:
+  containers:
+    - name: webapp
+      image: richardchesterwood/k8s-fleetman-webapp-angular:release0-multi
+
+
+
+--- # This is a document separator for yaml files
+apiVersion: v1
+kind: Pod
+metadata:
+  name: webapp-release-0-5
+  labels:
+    app: webapp
+    release: 0-5
+spec:
+  containers:
+    - name: webapp
+      image: richardchesterwood/k8s-fleetman-webapp-angular:release0-5-multi

@@ -1,0 +1,22 @@
+apiVersion: v1
+kind: Service
+metadata:
+  # This is super important because it is the official name used by other services as a reference point
+  name: fleetman-webapp
+spec:
+  # These are the pods that are going to be represented by this Service,
+  # this service becomes a network endpoint for other serivces
+  # or external services.
+  selector:
+    app: webapp # This is a key-value pair. Just need to match the pod it refers to
+    release: "0-5"
+  ports:
+    - name: http
+      port: 80
+      targetPort: 80
+      nodePort: 30080 # nodePorts must be greater than 30k
+  # NodePort is a type of service that exposes a port to the internet
+  # There are other types of services. This includes "loadBalancer" & "CßlusterIP"
+  type: NodePort
+
+  # After every change, need to re-apply the yaml fileß
