@@ -13,7 +13,6 @@ spec:
   ports:
     - name: http
       port: 80
-      targetPort: 80
       nodePort: 30080 # nodePorts must be greater than 30k
   # NodePort is a type of service that exposes a port to the internet
   # There are other types of services. This includes "loadBalancer" & "CßlusterIP"
@@ -28,7 +27,7 @@ metadata:
   name: fleetman-queue
 spec:
   selector:
-    app: queue 
+    app: queue
   ports:
     - name: http
       port: 8161
