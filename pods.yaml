@@ -6,10 +6,11 @@
 # If we are not using docker desktop, we will need to issue command: $minikube ip to get the domain IP.
 
 apiVersion: apps/v1
-kind: ReplicaSet
+kind: Deployment
 metadata:
   name: webapp
 spec:
+  # minReadySeconds: 30
   replicas: 2
   selector:
     matchLabels:
@@ -22,7 +23,6 @@ spec:
       containers:
         - name: webapp
           image: richardchesterwood/k8s-fleetman-webapp-angular:release0-5-multi
-
 --- # This is a document separator for yaml files
 apiVersion: v1
 kind: Pod

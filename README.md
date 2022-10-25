@@ -104,3 +104,92 @@ frontend-wtsmm   1/1     Running   0          6m36s
 A ReplicaSet ensures that a specified number of pod replicas are always running at any given time. However, a Deployment is a high-level concept that manages ReplicaSets and provides declarative updates to Pods alongside other useful features.
 
 Therefore, it is recommended to use Deployments instead of ReplicaSets unless there is a requirement for custom update orchestration or the Pods do not require updates at all.
+
+### Introducing: Deployments
+
+We can think of Deployments as a ReplicaSet manager. It deploys ReplicaSets which in turn, manages Pods. The Deployment .yaml file actually looks the same as the ReplicaSet .yaml file. However, there are extra features to fine-tune the deployment such as delaying the termination of a Pod for *x* seconds. Apart from the extra customizability, deployments also allows developers to "rollback" a deployment.
+
+#### How to use deployments?
+
+Remember the `kind: ReplicaSet`? Just change `ReplicaSet` to `Deployment` and reapply the yaml file.
+
+```yaml
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: frontend
+  labels:
+    app: guestbook
+    tier: frontend
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      tier: frontend
+  template:
+    metadata:
+      labels:
+        tier: frontend
+    spec:
+      containers:
+      - name: php-redis
+        image: gcr.io/google_samples/gb-frontend:v3
+```
+
+Looking at the `$ kubectl get all` after the deployment, we see the following:
+
+```plaintext
+NAME                          READY   STATUS    RESTARTS        AGE
+pod/webapp-86cbfbbbf7-5gvlm   1/1     Running   0               8m13s
+pod/webapp-86cbfbbbf7-fbtlz   1/1     Running   0               7m42s
+
+<Services portion>
+
+NAME                     READY   UP-TO-DATE   AVAILABLE   AGE
+deployment.apps/webapp   2/2     2            2           23m
+
+NAME                                DESIRED   CURRENT   READY   AGE
+replicaset.apps/webapp-5454bb45b    0         0         0       3m50s
+replicaset.apps/webapp-6f78788c87   0         0         0       21m
+replicaset.apps/webapp-86cbfbbbf7   2         2         2       14m
+```
+
+Notice that there is one deployment. This deployment created a ReplicaSet (`replicaset.apps/webapp-86cbfbbbf7`) and that ReplicaSet created 2 Pods:
+
+1. `pod/webapp-86cbfbbbf7-5gvlm`
+2. `pod/webapp-86cbfbbbf7-fbtlz`
+
+Notice that the Pods inherits the ReplicaSet's name and appends a random ID to the back.
+
+Also notice the other replicaSets with `0 DESIRED`, `0 CURRENT` and `0 READY`. These are replicaSets that was created and had since been obsoleted by a newer deployment. Those are the replicaSets that we could rollback to.
+
+Some useful commands:
+
+#### To see deployment status
+
+```plaintext
+$ kubectl rollout status deployment/webapp
+> deployment "webapp" successfully rolled out
+```
+
+#### To see revisions of deployments
+
+```plaintext
+$ kubectl rollout history deployment/webapp
+
+## alternatively:
+
+$ kubectl rollout history deployment/webapp --revision=2
+```
+
+#### Rolling back to previous deployments
+
+```plaintext
+$ kubectl rollout undo deployment/webapp
+
+## alternatively, rollback to other previous revisions:
+
+$ kubectl rollout undo deployment/webapp --to-revision=2
+```
+
+> This is a dangerous feature because the .yaml file will not match the currently deployed version of the application after a rollback. It is only to be used in an emergency.
