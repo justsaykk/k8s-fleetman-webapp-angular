@@ -9,7 +9,6 @@ spec:
   # or external services.
   selector:
     app: webapp # This is a key-value pair. Just need to match the pod it refers to
-    release: "0-5"
   ports:
     - name: http
       port: 80
@@ -18,7 +17,7 @@ spec:
   # There are other types of services. This includes "loadBalancer" & "CßlusterIP"
   type: NodePort
 
-  # After every change, need to re-apply the yaml fileß
+  # After every change, need to re-apply the yaml file
 
 ---
 apiVersion: v1
