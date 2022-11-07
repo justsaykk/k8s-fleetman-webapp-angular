@@ -1,0 +1,111 @@
+# Intrinsically, pods are not exposed to the internet.
+# Pods needs something to help expose them to the browser/internet.
+# These are called services.
+# After the service to expose them has been created, the pod can be accessed via
+# localhost:<nodePort>    Since we are using docker desktop, it is safe to use "localhost"
+# If we are not using docker desktop, we will need to issue command: $minikube ip to get the domain IP.
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: webapp
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: webapp
+  template: # template for the pods
+    metadata:
+      labels:
+        app: webapp
+    spec:
+      containers:
+        - name: webapp
+          image: richardchesterwood/k8s-fleetman-webapp-angular:release2-multi
+          env:
+            - name: SPRING_PROFILES_ACTIVE
+              value: production-microservice
+
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: queue
+spec:
+  selector:
+    matchLabels:
+      app: queue
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: queue
+    spec:
+      containers:
+        - name: queue
+          image: richardchesterwood/k8s-fleetman-queue:release2-multi
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: position-simulator
+spec:
+  selector:
+    matchLabels:
+      app: position-simulator
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: position-simulator
+    spec:
+      containers:
+        - name: position-simulator
+          image: richardchesterwood/k8s-fleetman-position-simulator:release2-multi
+          env:
+            - name: SPRING_PROFILES_ACTIVE
+              value: production-microservice
+
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: position-tracker
+spec:
+  selector:
+    matchLabels:
+      app: position-tracker
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: position-tracker
+    spec:
+      containers:
+        - name: position-tracker
+          image: richardchesterwood/k8s-fleetman-position-tracker:release2-multi
+          env:
+            - name: SPRING_PROFILES_ACTIVE
+              value: production-microservice
+
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: api-gateway
+spec:
+  selector:
+    matchLabels:
+      app: api-gateway
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: api-gateway
+    spec:
+      containers:
+        - name: api-gateway
+          image: richardchesterwood/k8s-fleetman-api-gateway:release2-multi
+          env:
+            - name: SPRING_PROFILES_ACTIVE
+              value: production-microservice

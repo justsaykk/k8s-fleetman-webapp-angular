@@ -1,7 +1,8 @@
 apiVersion: v1
 kind: Service
 metadata:
-  # This is super important because it is the official name used by other services as a reference point
+  # This is super important because it is the official name used by other services as a reference point.
+  # Essentially, it is added to the DNS table. Therefore, this has to be simple and unique.
   name: fleetman-webapp
 spec:
   # These are the pods that are going to be represented by this Service,
@@ -11,7 +12,7 @@ spec:
     app: webapp # This is a key-value pair. Just need to match the pod it refers to
   ports:
     - name: http
-      port: 80
+      port: 80 # This is the internal port number
       nodePort: 30080 # nodePorts must be greater than 30k
   # NodePort is a type of service that exposes a port to the internet
   # There are other types of services. This includes "loadBalancer" & "CßlusterIP"
@@ -31,4 +32,33 @@ spec:
     - name: http
       port: 8161
       nodePort: 30010
+
+    - name: endpoint
+      port: 61616
   type: NodePort
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: fleetman-position-tracker
+spec:
+  selector:
+    app: position-tracker
+  ports:
+    - name: http
+      port: 8080
+  type: ClusterIP
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: fleetman-api-gateway
+spec:
+  selector:
+    app: api-gateway
+  ports:
+    - name: http
+      port: 8080
+  type: ClusterIP

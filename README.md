@@ -42,7 +42,7 @@ metadata:
   name: fleetman-webapp
 spec:
   selector:
-    app: webapp
+    app: webapp # This is a key-value pair. Just need to match the pod it refers to
   ports:
     - name: http
       port: 80
@@ -193,3 +193,6 @@ $ kubectl rollout undo deployment/webapp --to-revision=2
 ```
 
 > This is a dangerous feature because the .yaml file will not match the currently deployed version of the application after a rollback. It is only to be used in an emergency.
+
+### Introducing Persistent Storage
+
